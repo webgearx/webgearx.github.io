@@ -27,6 +27,7 @@
     };
     console.error = alert
     const queryString = window.location.search;
+    const href = window.location.href
     const urlParams = new URLSearchParams(queryString);
     var show = document.getElementById("show")
 
@@ -56,7 +57,7 @@
       set(ref(database, 'page/' + name), {value: code, owner: "None"});
       alert("uploaded")
       document.getElementById("bodydiv").innerHTML += "<br>"
-      document.getElementById("bodydiv").innerHTML += '<a href="' + window.location.href + "?id=" + name + '>' + name + '</a>'
+      document.getElementById("bodydiv").innerHTML += ('<a href="' + href + "?id=" + name + '>' + name + '</a>')
 
     }
     var uploadbt = document.getElementById("upload")
