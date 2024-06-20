@@ -57,7 +57,8 @@
       set(ref(database, 'page/' + name), {value: code, owner: "None"});
       alert("uploaded")
       document.getElementById("bodydiv").innerHTML += "<br>"
-      document.getElementById("bodydiv").innerHTML += String('<a href="' + href + "?id=" + name + '>' + name + '</a>')
+      document.getElementById("bodydiv").innerHTML += window.location.href
+      document.getElementById("bodydiv").innerHTML += "?id=" + name
 
     }
     var uploadbt = document.getElementById("upload")
