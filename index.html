@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>WEBGEARX</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {getDatabase, ref, set, get, child} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import {getAnalytics} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyAz_dRO7S0Tr_kyZhPHpyPnQSLPzUMtfEY",
+      authDomain: "webgearx-e4a64.firebaseapp.com",
+      projectId: "webgearx-e4a64",
+      storageBucket: "webgearx-e4a64.appspot.com",
+      messagingSenderId: "1017438168920",
+      appId: "1:1017438168920:web:b873248d29dc3f62c6a72d",
+      measurementId: "G-HL4651KN0X"
+    };
+    console.error = alert
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    var show = document.getElementById("show")
+
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const database = getDatabase();
+    if (urlParams.get('id')) {
+      get(ref(database, `page/${urlParams.get('id')}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          document.title = urlParams.get('id')
+          show.innerHTML = snapshot.val().value
+          show.style = ""
+          document.getElementById("body").style = 'display: none'
+        } else {
+          console.log("No data available");
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+    }
+    var upload = function () {
+      var name = document.getElementById("name").value
+      var code = document.getElementById("htmlcode").value
+
+      set(ref(database, 'page/' + name), {value: code, owner: "None"});
+      alert("uploaded")
+      document.getElementById("body").innerHTML += "<br>"
+      document.getElementById("body").innerHTML += '<a href="' + window.location.href + "?id=" + name + '>' + name + '</a>'
+
+    }
+    var uploadbt = document.getElementById("upload")
+    uploadbt.onclick = upload
+
+  </script>
+</head>
+
+<body>
+  <div id="body">
+    name:<input id="name"></input><br>
+    code:<input id="htmlcode"></input><br>
+
+
+    <button id="upload">upload</button>
+  </div>
+  <div id="show" style="display:none;"></div>
+</body>
+
+</html>
