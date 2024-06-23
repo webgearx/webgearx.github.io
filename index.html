@@ -11,6 +11,8 @@
     import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {getDatabase, ref, set, get, child} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
     import {getAnalytics} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -30,12 +32,48 @@
     const href = window.location.href
     const urlParams = new URLSearchParams(queryString);
     var show = document.getElementById("show")
-
+    var uid = "None"
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const database = getDatabase();
+    
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    if (!urlParams.get('id')){
+      signInWithPopup(auth, provider)
+        .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        document.getElementById("bodydiv").innerHTML = "Username:" + user.displayName + "<br>" + document.getElementById("bodydiv").innerHTML
+        // IdP data available using getAdditionalUserInfo(result)
+        uid = user.uid
+        // ...
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+      const user = auth.currentUser;
+    }
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/auth.user
+      // ...
+      alert("Welcome to WEBGEARX")
+    } else {
+      alert("please sign in to continue!")
+      document.getElementById("bodydiv").innerHTML = ""
+    }
     if (urlParams.get('id')) {
       get(ref(database, `page/${urlParams.get('id')}`)).then((snapshot) => {
         if (snapshot.exists()) {
@@ -53,13 +91,27 @@
     var upload = function () {
       var name = document.getElementById("name").value
       var code = document.getElementById("htmlcode").value
-
-      set(ref(database, 'page/' + name), {value: code, owner: "None"});
-      alert("uploaded")
-      document.getElementById("bodydiv").innerHTML += "<br>"
-      document.getElementById("bodydiv").innerHTML += window.location.href
-      document.getElementById("bodydiv").innerHTML += "?id=" + name
-
+      get(ref(database, 'page/' + name)).then((snapshot) => {
+        if (!snapshot.exists()) {
+          set(ref(database, 'page/' + name), {value: code, owner: uid});
+          alert("uploaded")
+          document.getElementById("bodydiv").innerHTML += "<br>"
+          document.getElementById("bodydiv").innerHTML += window.location.href
+          document.getElementById("bodydiv").innerHTML += "?id=" + name
+        } else {
+          if (snapshot.val().owner == uid){
+            
+            set(ref(database, 'page/' + name), {value: code, owner: uid});
+            alert("updated")
+            document.getElementById("bodydiv").innerHTML += "<br>"
+            document.getElementById("bodydiv").innerHTML += window.location.href
+            document.getElementById("bodydiv").innerHTML += "?id=" + name
+          }
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+      
     }
     var uploadbt = document.getElementById("upload")
     uploadbt.onclick = upload
