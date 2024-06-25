@@ -38,7 +38,7 @@
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const database = getDatabase();
-    
+    var user = "None"
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
     if (!urlParams.get('id')){
@@ -63,9 +63,9 @@
         const credential = GoogleAuthProvider.credentialFromError(error);
         // ...
       });
-      const user = auth.currentUser;
+      user = auth.currentUser;
     }
-    if (user) {
+    if (user != "None") {
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/auth.user
       // ...
