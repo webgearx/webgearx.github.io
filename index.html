@@ -93,7 +93,9 @@
       var code = document.getElementById("htmlcode").value
       get(ref(database, 'page/' + name)).then((snapshot) => {
         if (!snapshot.exists()) {
-          set(ref(database, 'page/' + name), {value: code, owner: uid});
+          const d = new Date();
+          let text = d.toTimeString();
+          set(ref(database, 'page/' + name), {value: code, owner: uid, last: text});
           alert("uploaded")
           document.getElementById("bodydiv").innerHTML += "<br>"
           document.getElementById("bodydiv").innerHTML += window.location.href
@@ -115,7 +117,27 @@
     }
     var uploadbt = document.getElementById("upload")
     uploadbt.onclick = upload
-
+    function updatepages(){
+      var data
+      get(ref(database, 'user' + uid)).then((snapshot) => {
+        if (!snapshot.exists()){
+          data = {}
+        }else{
+          data = snapshot.val()
+        }
+        var innerhtml = ""
+        for (var i = 0; i < Object.keys(data).length;i++){
+          innerhtml += "<br>"
+          innerhtml += "Item " + i + ":<br>"
+          innerhtml += "Name: " + Object.keys(data)[i] + "<br>"
+          innerhtml += "Size: " + data[Object.keys(data)[i]].value.length / 1024 + "kb" + "<br>"
+          innerhtml += "LastEdit: " + data[Object.keys(data)[i]].last + "<br>"
+          innerhtml += '<button onclick="copy(' + Object.keys(data)[i] + ')">' + "EDIT</button>"
+        }
+        document.getElementById("yourpage").innerHTML = innerhtml
+      })
+      
+    }
   </script>
 </head>
 
@@ -126,6 +148,9 @@
 
 
     <button id="upload">upload</button>
+  </div>
+  <div id="yourpage">
+    
   </div>
   <div id="show" style="display:none;"></div>
 </body>
