@@ -5,7 +5,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>WEBGEARX</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
   <script type="module">
     // Import the functions you need from the SDKs you need
     import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -100,6 +99,16 @@
           document.getElementById("bodydiv").innerHTML += "<br>"
           document.getElementById("bodydiv").innerHTML += window.location.href
           document.getElementById("bodydiv").innerHTML += "?id=" + name
+          get(ref(database, 'user/' + uid)).then((snapshot) => {
+            var dataget
+            if (snapshot.exists()){
+              dataget = snapshot.val()
+            }else{
+              dataget = {}
+            }
+            dataget[name] = "plaintext"
+            set(ref(database, 'user/' + uid),dataget)
+          })
         } else {
           if (snapshot.val().owner == uid){
             
@@ -119,7 +128,7 @@
     uploadbt.onclick = upload
     function updatepages(){
       var data
-      get(ref(database, 'user' + uid)).then((snapshot) => {
+      get(ref(database, 'user/' + uid)).then((snapshot) => {
         if (!snapshot.exists()){
           data = {}
         }else{
@@ -127,13 +136,17 @@
         }
         var innerhtml = ""
         for (var i = 0; i < Object.keys(data).length;i++){
-          innerhtml += "<br>"
-          innerhtml += "Item " + i + ":<br>"
-          innerhtml += "Name: " + Object.keys(data)[i] + "<br>"
-          innerhtml += "Size: " + data[Object.keys(data)[i]].value.length / 1024 + "kb" + "<br>"
-          innerhtml += "LastEdit: " + data[Object.keys(data)[i]].last + "<br>"
-          innerhtml += '<button onclick="copy(' + Object.keys(data)[i] + ')">' + "EDIT</button>"
+          get(ref(database, 'page/' + Object.keys(data)[i])).then((snapshot) => {
+            var page = snapshot.val()
+            innerhtml += "<br>"
+            innerhtml += "Item " + i + ":<br>"
+            innerhtml += "Name: " + Object.keys(data)[i] + "<br>"
+            innerhtml += "Size: " + page.value.length / 1024 + "kb" + "<br>"
+            innerhtml += "LastEdit: " + page.last + "<br>"
+            innerhtml += '<button onclick="copy(' + Object.keys(data)[i] + ')">' + "EDIT</button>"
+          })
         }
+        
         document.getElementById("yourpage").innerHTML = innerhtml
       })
       
