@@ -26,7 +26,8 @@
       appId: "1:1017438168920:web:b873248d29dc3f62c6a72d",
       measurementId: "G-HL4651KN0X"
     };
-    console.error = alert
+    
+    
     const queryString = window.location.search;
     const href = window.location.href
     const urlParams = new URLSearchParams(queryString);
@@ -171,6 +172,8 @@
       })
       
     }
+    var updatebt = document.getElementById("update")
+    updatebt.onclick = updatepages
   </script>
 </head>
 
@@ -181,6 +184,7 @@
 
 
     <button id="upload">upload</button>
+    <button id="update">update</button>
   </div>
   <div id="yourpage">
     
