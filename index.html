@@ -63,12 +63,12 @@
         // ...
       });
       user = auth.currentUser;
-    }
-    onAuthStateChanged(auth, (user) => {
+      onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
         alert("Welcome to WEBGEARX")
+        updatepages()
         document.getElementById("bodydiv").style = ""
         // ...
       } else {
@@ -77,17 +77,22 @@
         alert("please sign in to continue!")
         document.getElementById("bodydiv").style = "display:None;"
       }
-    });
-    if (user != "None") {
+      });
+      if (user != "None") {
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/auth.user
       // ...
       alert("Welcome to WEBGEARX")
       document.getElementById("bodydiv").style = ""
+      updatepages()
     } else {
       alert("please sign in to continue!")
       document.getElementById("bodydiv").style = "display:None;"
     }
+    }
+    
+    
+    
     if (urlParams.get('id')) {
       get(ref(database, `page/${urlParams.get('id')}`)).then((snapshot) => {
         if (snapshot.exists()) {
