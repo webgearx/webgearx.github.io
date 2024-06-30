@@ -69,12 +69,13 @@
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
         alert("Welcome to WEBGEARX")
+        document.getElementById("bodydiv").style = ""
         // ...
       } else {
         // User is signed out
         // ...
         alert("please sign in to continue!")
-        document.getElementById("bodydiv").innerHTML = ""
+        document.getElementById("bodydiv").style = "display:None;"
       }
     });
     if (user != "None") {
@@ -82,9 +83,10 @@
       // https://firebase.google.com/docs/reference/js/auth.user
       // ...
       alert("Welcome to WEBGEARX")
+      document.getElementById("bodydiv").style = ""
     } else {
       alert("please sign in to continue!")
-      document.getElementById("bodydiv").innerHTML = ""
+      document.getElementById("bodydiv").style = "display:None;"
     }
     if (urlParams.get('id')) {
       get(ref(database, `page/${urlParams.get('id')}`)).then((snapshot) => {
