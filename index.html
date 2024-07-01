@@ -112,6 +112,31 @@
       console.log("uploading")
       var name = document.getElementById("name").value
       var code = document.getElementById("htmlcode").value
+      if (!name){
+        alert("name is empty")
+        return 0
+      }
+      if (!code){
+        if (!prompt("do you want to unregister thr page? /n if yes,input project name again :" + name) == name){
+          set(ref(database, 'page/' + name), {});
+          get(ref(database, 'user/' + uid)).then((snapshot) => {
+            var dataget
+            if (snapshot.exists()){
+              dataget = snapshot.val()
+            }else{
+              dataget = {}
+            }
+            delete dataget[name]
+            set(ref(database, 'user/' + uid),dataget)
+            alert("unregistered")
+          })
+          
+          return 0
+        }else{
+          alert("cancelled")
+          return 0
+        }
+      }
       get(ref(database, 'page/' + name)).then((snapshot) => {
         if (!snapshot.exists()) {
           const d = new Date();
