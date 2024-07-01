@@ -26,8 +26,8 @@
       appId: "1:1017438168920:web:b873248d29dc3f62c6a72d",
       measurementId: "G-HL4651KN0X"
     };
-    
-    
+
+
     const queryString = window.location.search;
     const href = window.location.href
     const urlParams = new URLSearchParams(queryString);
@@ -49,7 +49,7 @@
         const token = credential.accessToken;
         // The signed-in user info.
         const user = result.user;
-        document.getElementById("bodydiv").innerHTML = "Username:" + user.displayName + "<br>" + document.getElementById("bodydiv").innerHTML
+        document.getElementById("userdiv").innerHTML = "Username:" + user.displayName + "<br>" + document.getElementById("userdiv").innerHTML
         // IdP data available using getAdditionalUserInfo(result)
         uid = user.uid
         // ...
@@ -69,7 +69,7 @@
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
         alert("Welcome to WEBGEARX")
-        
+
         document.getElementById("bodydiv").style = ""
         // ...
       } else {
@@ -85,15 +85,15 @@
       // ...
       alert("Welcome to WEBGEARX")
       document.getElementById("bodydiv").style = ""
-      
+
     } else {
       alert("please sign in to continue!")
       document.getElementById("bodydiv").style = "display:None;"
     }
     }
-    
-    
-    
+
+
+
     if (urlParams.get('id')) {
       get(ref(database, `page/${urlParams.get('id')}`)).then((snapshot) => {
         if (snapshot.exists()) {
@@ -109,6 +109,7 @@
       });
     }
     var upload = function () {
+      console.log("uploading")
       var name = document.getElementById("name").value
       var code = document.getElementById("htmlcode").value
       get(ref(database, 'page/' + name)).then((snapshot) => {
@@ -132,7 +133,7 @@
           })
         } else {
           if (snapshot.val().owner == uid){
-            
+
             set(ref(database, 'page/' + name), {value: code, owner: uid});
             alert("updated")
             document.getElementById("bodydiv").innerHTML += "<br>"
@@ -143,51 +144,61 @@
       }).catch((error) => {
         console.error(error);
       });
-      
+
     }
-    var uploadbt = document.getElementById("upload")
-    uploadbt.onclick = upload
+    function genurl(key){
+      return "<br>" +  window.location.href
+      + "?id=" + key
+    }
     function updatepages(){
+      document.getElementById("yourpage").innerHTML = ""
       var data
+      console.log("updating")
       get(ref(database, 'user/' + uid)).then((snapshot) => {
         if (!snapshot.exists()){
           data = {}
+          console.log("new user no record")
         }else{
           data = snapshot.val()
+          console.log(data)
+          console.log(Object.keys(data))
         }
-        var innerhtml = ""
         for (var i = 0; i < Object.keys(data).length;i++){
-          get(ref(database, 'page/' + Object.keys(data)[i])).then((snapshot) => {
+          var name = Object.keys(data)[i]
+          get(ref(database, 'page/' + name)).then((snapshot) => {
+            console.log("grap data")
+            console.log(snapshot.val())
             var page = snapshot.val()
-            innerhtml += "<br>"
-            innerhtml += "Item " + i + ":<br>"
-            innerhtml += "Name: " + Object.keys(data)[i] + "<br>"
-            innerhtml += "Size: " + page.value.length / 1024 + "kb" + "<br>"
-            innerhtml += "LastEdit: " + page.last + "<br>"
-            innerhtml += '<button onclick="copy(' + Object.keys(data)[i] + ')">' + "EDIT</button>"
+              document.getElementById("yourpage").innerHTML += "<br>"
+              document.getElementById("yourpage").innerHTML += "Item " + i + ":<br>"
+              document.getElementById("yourpage").innerHTML += "Name: " + name + "<br>"
+              document.getElementById("yourpage").innerHTML += "Size: " + page.value.length / 1024 + "kb" + "<br>"
+              document.getElementById("yourpage").innerHTML += "LastEdit: " + page.last + "<br>"
+            document.getElementById("yourpage").innerHTML += "Url :" + genurl(name)
+              document.getElementById("yourpage").innerHTML += "<br><button onclick='" + 'document.getElementById("name").value = "' + name + '"; document.getElementById("htmlcode").value = "' + page.value + '";' + "'>Edit</button>"
           })
         }
-        
-        document.getElementById("yourpage").innerHTML = innerhtml
       })
-      
+
     }
-    var updatebt = document.getElementById("update")
-    updatebt.onclick = updatepages
+    document.getElementById("upload").onclick = upload
+    document.getElementById("refresh").onclick = updatepages
+    setTimeout(updatepages,5000)
   </script>
 </head>
 
 <body>
+  <div id="userdiv"></div>
   <div id="bodydiv">
-    name:<input id="name"></input><br>
-    code:<input id="htmlcode"></input><br>
+    key:<input id="name"></input><br>
+    value:<input id="htmlcode"></input><br>
 
 
-    <button id="upload">upload</button>
-    <button id="update">update</button>
+    <button id="upload" >upload</button><br>
+    <button id="refresh">refresh</button>
+    
   </div>
   <div id="yourpage">
-    
   </div>
   <div id="show" style="display:none;"></div>
 </body>
