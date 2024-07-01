@@ -33,7 +33,15 @@
     const urlParams = new URLSearchParams(queryString);
     var show = document.getElementById("show")
     var uid = "None"
-
+    function download(filename, text) {
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
@@ -199,8 +207,9 @@
               document.getElementById("yourpage").innerHTML += "Name: " + name + "<br>"
               document.getElementById("yourpage").innerHTML += "Size: " + page.value.length / 1024 + "kb" + "<br>"
               document.getElementById("yourpage").innerHTML += "LastEdit: " + page.last + "<br>"
-            document.getElementById("yourpage").innerHTML += "Url :" + genurl(name)
+              document.getElementById("yourpage").innerHTML += "Url :" + genurl(name)
               document.getElementById("yourpage").innerHTML += "<br><button onclick='" + 'document.getElementById("name").value = "' + name + '"; document.getElementById("htmlcode").value = "' + page.value + '";' + "'>Edit</button>"
+              document.getElementById("yourpage").innerHTML += "<button onclick='download(" + '"' + name + '","' + page.value + '"' + ")'>Download</button>"
           })
         }
       })
